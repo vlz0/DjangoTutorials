@@ -65,7 +65,13 @@ class ProductShowView(View):
 
 class ProductForm(forms.Form): 
     name = forms.CharField(required=True) 
-    price = forms.FloatField(required=True) 
+    price = forms.FloatField(required=True)
+    
+    def clean_price(self):
+        price = self.cleaned_data.get('price')
+        if price is not None and price <= 0:
+            raise forms.ValidationError("El precio debe ser mayor a cero.")
+        return price
     
 class ProductCreateView(View): 
     template_name = 'products/create.html' 
@@ -81,7 +87,7 @@ class ProductCreateView(View):
     def post(self, request): 
         form = ProductForm(request.POST) 
         if form.is_valid(): 
-            return redirect(form) 
+            return redirect('form') 
         else: 
             viewData = {} 
             viewData["title"] = "Create product" 
