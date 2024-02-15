@@ -87,10 +87,13 @@ class ProductCreateView(View):
     def post(self, request): 
         form = ProductForm(request.POST) 
         if form.is_valid(): 
-            return redirect('form') 
+            return redirect('valido') 
         else: 
             viewData = {} 
             viewData["title"] = "Create product" 
             viewData["form"] = form 
             
             return render(request, self.template_name, viewData)
+        
+class ProductoValido(TemplateView):
+    template_name = 'products/valido.html'
