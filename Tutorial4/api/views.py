@@ -1,5 +1,5 @@
 from rest_framework import generics, permissions
-from .serializers import ToDoSerializer
+from .serializers import ToDoSerializer, TodoToggleCompleteSerializer
 from todo.models import ToDo
 
 class TodoListCreate(generics.ListCreateAPIView):
@@ -25,3 +25,15 @@ class TodoRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
         user = self.request.user
         # user can only update, delete own posts
         return ToDo.objects.filter(user=user)
+
+class TodoToggleComplete(generics.UpdateAPIView):
+    serializer_class = TodoToggleCompleteSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        user = self.request.user
+        return ToDo.objects.filter(user=user)
+
+    def perform_update(self,serializer):
+        serializer.instance.completed=not(serializer.instance.completed)
+        serializer.save()
